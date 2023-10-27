@@ -14,14 +14,20 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private float minViewX;
     private float rotationX;
 
+    [Header("Data")]
+    [SerializeField] private int currentAmmo;
+    [SerializeField] private int maxAmmo;
+
     //Components
     private Camera pCamera;
     private Rigidbody rb;
+    private WeaponController weaponController;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         pCamera = Camera.main;
+        weaponController = GetComponent<WeaponController>();
 
         //Hide the cursor
         Cursor.lockState = CursorLockMode.Locked;
@@ -30,9 +36,32 @@ public class PlayerManager : MonoBehaviour
     private void Update()
     {
         CameraView();
+        //Jump
         if (Input.GetButtonDown("Jump"))
         {
             Jump();
+        }
+
+        //Fire
+        if (Input.GetButtonDown("Fire1"))
+        {
+            if (weaponController.CanShoot()) 
+            {
+                weaponController.Shoot();
+            }
+        }
+
+        //Reload
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            if (currentAmmo > 0)
+            {
+                int ammoSpent = weaponController.Reload(currentAmmo);
+                if (ammoSpent > 0)
+                {
+                    currentAmmo -= ammoSpent;
+                }
+            }
         }
     }
 

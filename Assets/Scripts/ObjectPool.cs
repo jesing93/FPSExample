@@ -40,15 +40,15 @@ public class ObjectPool : MonoBehaviour
     public GameObject GetGameObject()
     {
         //Find in the poolObject an object that is Inactive in the game
-        GameObject gameObject = poolObjects.Find(x => x.activeInHierarchy == false);
+        GameObject item = poolObjects.Find(x => x.activeInHierarchy == false);
         //If not found, create object
-        if (gameObject == null)
+        if (item == null)
         {
-            gameObject = CreateNewObject();
+            item = CreateNewObject();
         }
         //Activate the selected object
-        gameObject.SetActive(true);
+        item.SetActive(true);
 
-        return gameObject;
+        return item;
     }
 }
