@@ -17,6 +17,8 @@ public class PlayerManager : MonoBehaviour
     [Header("Data")]
     [SerializeField] private int currentAmmo;
     [SerializeField] private int maxAmmo;
+    [SerializeField] private float currentLife;
+    [SerializeField] private float maxLife;
 
     //Components
     private Camera pCamera;
@@ -28,6 +30,7 @@ public class PlayerManager : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         pCamera = Camera.main;
         weaponController = GetComponent<WeaponController>();
+        //weaponController.IsPlayer = true;
 
         //Hide the cursor
         Cursor.lockState = CursorLockMode.Locked;
@@ -116,5 +119,10 @@ public class PlayerManager : MonoBehaviour
 
         //Rotate the player
         transform.eulerAngles += Vector3.up * y;
+    }
+
+    public void ReceiveDamage(float damage)
+    {
+        currentLife = Mathf.Clamp(currentLife - damage, 0, maxLife);
     }
 }

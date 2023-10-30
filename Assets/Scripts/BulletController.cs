@@ -9,6 +9,8 @@ public class BulletController : MonoBehaviour
     private float shootTime;
     [SerializeField] private float damage;
     private float weaponMultiplier;
+    [SerializeField] private GameObject damageParticle;
+    [SerializeField] private GameObject impactParticle;
 
     public float WeaponMultiplier { get => weaponMultiplier; set => weaponMultiplier = value; }
 
@@ -31,6 +33,17 @@ public class BulletController : MonoBehaviour
         {
             gameObject.SetActive(false);
             other.GetComponentInParent<EnemyManager>().DamageEnemy(damage);
+            GameObject particles = Instantiate(damageParticle, transform.position, Quaternion.identity);
+        }
+        else if (other.CompareTag("Player"))
+        {
+            gameObject.SetActive(false);
+            other.GetComponentInParent<PlayerManager>().ReceiveDamage(damage);
+            GameObject particles = Instantiate(damageParticle, transform.position, Quaternion.identity);
+        }
+        else
+        {
+            GameObject particles = Instantiate(impactParticle, transform.position, Quaternion.identity);
         }
         //TODO Collision management
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEngine;
 
@@ -20,18 +21,36 @@ public class WeaponController : MonoBehaviour
 
     private ObjectPool pool;
     private float lastShootTime;
+    [SerializeField] private WeaponType weaponType;
 
+    //Components
+    [SerializeField] private GameObject currentWeapon;
+    [SerializeField] private GameObject[] weaponsList;
 
-    private bool isPlayer;
+    private bool isPlayer = false;
+
+    public bool IsPlayer { get => isPlayer; set => isPlayer = value; }
 
     private void Awake()
     {
         //Check if I'm a player
         if(GetComponent<PlayerManager>())
         {
-            isPlayer = true;
+            IsPlayer = true;
         }
         pool = GetComponent<ObjectPool>();
+        /*
+        switch (weaponType)
+        {
+            case WeaponType.bazooka:
+                currentWeapon = weaponsList[1];
+                outPostion = currentWeapon.transform.Find("OutPosition").transform;
+                break;
+            default: 
+                
+        currentWeapon = weaponsList[0];
+                break;
+        }*/
     }
 
     /// <summary>
@@ -76,8 +95,27 @@ public class WeaponController : MonoBehaviour
         bullet.transform.position = outPostion.position;
         bullet.transform.rotation = outPostion.rotation;
 
-        //Give speed to the bullet
-        bullet.GetComponent<Rigidbody>().velocity = outPostion.forward * bulletSpeed;
+        if (IsPlayer)
+        {
+            //Create ray from the camera to the target
+            Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+            RaycastHit hit;
+            Vector3 targetPoint;
+
+            //Check if you are pointing to sth and adjust the direction
+            if (Physics.Raycast(ray, out hit))
+                targetPoint = hit.point;
+            else
+                targetPoint = ray.GetPoint(5); //5m
+
+            //Give speed to the bullet
+            bullet.GetComponent<Rigidbody>().velocity = (targetPoint - bullet.transform.position).normalized * bulletSpeed;
+        }
+        else
+        {
+            //Give speed to the bullet
+            bullet.GetComponent<Rigidbody>().velocity = outPostion.forward * bulletSpeed;
+        }
     }
 
     /// <summary>
@@ -101,4 +139,8 @@ public class WeaponController : MonoBehaviour
         }
         return 0;
     }
+}
+public enum WeaponType
+{
+    pistol, bazooka
 }
