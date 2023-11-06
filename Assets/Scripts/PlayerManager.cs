@@ -121,8 +121,9 @@ public class PlayerManager : MonoBehaviour
         transform.eulerAngles += Vector3.up * y;
     }
 
-    public void ReceiveDamage(float damage)
+    public void ReceiveDamage(float damage, bool damageOwner)
     {
         currentLife = Mathf.Clamp(currentLife - damage, 0, maxLife);
+        HudController.instance.UpdateHealth(currentLife);
     }
 }

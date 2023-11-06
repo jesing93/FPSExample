@@ -88,6 +88,9 @@ public class WeaponController : MonoBehaviour
 
         GameObject bullet = pool.GetGameObject();
 
+        //Set owner of the bullet
+        bullet.GetComponent<BulletController>().IsPlayer = isPlayer;
+
         //Set the damage multiplier
         bullet.GetComponent<BulletController>().WeaponMultiplier = damageMultiplier;
 

@@ -12,7 +12,10 @@ public class BulletController : MonoBehaviour
     [SerializeField] private GameObject damageParticle;
     [SerializeField] private GameObject impactParticle;
 
+    private bool isPlayer;
+
     public float WeaponMultiplier { get => weaponMultiplier; set => weaponMultiplier = value; }
+    public bool IsPlayer { get => isPlayer; set => isPlayer = value; }
 
     private void OnEnable()
     {
@@ -32,19 +35,19 @@ public class BulletController : MonoBehaviour
         if(other.CompareTag("Enemy"))
         {
             gameObject.SetActive(false);
-            other.GetComponentInParent<EnemyManager>().DamageEnemy(damage);
+            other.GetComponentInParent<EnemyManager>().DamageEnemy(damage, isPlayer);
             GameObject particles = Instantiate(damageParticle, transform.position, Quaternion.identity);
         }
         else if (other.CompareTag("Player"))
         {
             gameObject.SetActive(false);
-            other.GetComponentInParent<PlayerManager>().ReceiveDamage(damage);
+            other.GetComponentInParent<PlayerManager>().ReceiveDamage(damage, isPlayer);
             GameObject particles = Instantiate(damageParticle, transform.position, Quaternion.identity);
         }
         else
         {
             GameObject particles = Instantiate(impactParticle, transform.position, Quaternion.identity);
         }
-        //TODO Collision management
+        this.enabled = false;
     }
 }

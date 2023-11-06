@@ -91,7 +91,7 @@ public class EnemyManager : MonoBehaviour
         desPoint = (desPoint + 1) % points.Length;
     }
 
-    public void DamageEnemy(float quantity)
+    public void DamageEnemy(float quantity, bool isPLayer)
     {
         currentLife -= quantity;
         if(currentLife <= 0)
