@@ -37,6 +37,10 @@ public class BulletController : MonoBehaviour
             gameObject.SetActive(false);
             other.GetComponentInParent<EnemyManager>().DamageEnemy(damage, isPlayer);
             GameObject particles = Instantiate(damageParticle, transform.position, Quaternion.identity);
+            if (isPlayer)
+            {
+                PlayerManager.instance.AddScore(10);
+            }
         }
         else if (other.CompareTag("Player"))
         {

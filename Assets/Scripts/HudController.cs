@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class HudController : MonoBehaviour
 {
     [SerializeField] private Slider healthBar;
-    [SerializeField] private Text scoreText;
+    [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private Image damageEffect;
     [SerializeField] private float flashTime;
 
@@ -29,6 +30,11 @@ public class HudController : MonoBehaviour
             Color color = new Color(192f, 0f, 0f, 0f);
             healthBar.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>().color = color;
         }
+    }
+
+    public void UpdateScore(int score)
+    {
+        scoreText.text = score.ToString("00000");
     }
 
     /// <summary>

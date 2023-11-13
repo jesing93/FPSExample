@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,14 +20,22 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private int maxAmmo;
     [SerializeField] private float currentLife;
     [SerializeField] private float maxLife;
+    private int score;
 
     //Components
     private Camera pCamera;
     private Rigidbody rb;
     private WeaponController weaponController;
 
+    //Singletone
+    public static PlayerManager instance;
+
     private void Awake()
     {
+        //Singletone
+        instance = this;
+
+        //Components
         rb = GetComponent<Rigidbody>();
         pCamera = Camera.main;
         weaponController = GetComponent<WeaponController>();
@@ -125,5 +134,22 @@ public class PlayerManager : MonoBehaviour
     {
         currentLife = Mathf.Clamp(currentLife - damage, 0, maxLife);
         HudController.instance.UpdateHealth(currentLife);
+    }
+
+    public void ReceiveAmmo(int ammo)
+    {
+        currentAmmo = Math.Clamp((currentAmmo + ammo), 0, maxAmmo);
+    }
+
+    public void ReceiveHealth(int health)
+    {
+        currentLife = Mathf.Clamp((currentLife + health), 0, maxLife);
+        HudController.instance.UpdateHealth(currentLife);
+    }
+
+    public void AddScore(int bonusScore)
+    {
+        score += bonusScore;
+        HudController.instance.UpdateScore(score);
     }
 }

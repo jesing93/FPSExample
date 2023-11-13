@@ -8,12 +8,12 @@ using System;
 public class EnemyManager : MonoBehaviour
 {
     [Header("Enemy Data")]
-    [SerializeField] private float currentLife;
-    [SerializeField] private float maxLife;
+    [SerializeField] private EnemyData enemyData;
+    private float currentLife;
+    private float maxLife;
     [SerializeField] private int ScorePoints;
 
     [Header("Enemy Movement")]
-    [SerializeField][Range(0, 10)] private float speed;
     [SerializeField] private float attackRange;
     [SerializeField] private float followRange;
     [SerializeField] private bool alwaysFollow;
@@ -27,6 +27,7 @@ public class EnemyManager : MonoBehaviour
 
     //Components
     private WeaponController weapon;
+    private Renderer enemyRenderer;
 
     private void Start()
     {
@@ -34,6 +35,13 @@ public class EnemyManager : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         agent.autoBraking = false;
         weapon = GetComponentInChildren<WeaponController>();
+        enemyRenderer = GetComponentInChildren<Renderer>();
+
+        //Data from scriptable object
+        agent.speed = enemyData.Speed;
+        currentLife = maxLife = enemyData.MaxLife;
+        enemyRenderer.material = enemyData.EnemyMaterial;
+
         GoToNextPoint();
     }
 
@@ -96,6 +104,7 @@ public class EnemyManager : MonoBehaviour
         currentLife -= quantity;
         if(currentLife <= 0)
         {
+            PlayerManager.instance.AddScore(100);
             Destroy(gameObject);
         }
 
