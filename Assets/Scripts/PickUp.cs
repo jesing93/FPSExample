@@ -10,10 +10,11 @@ public class PickUp : MonoBehaviour
     private int amount;
     [SerializeField]
     private int respawnDelay;
+    private bool respawning = false;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !respawning)
         {
             switch (type)
             {
@@ -24,7 +25,17 @@ public class PickUp : MonoBehaviour
                     other.GetComponentInParent<PlayerManager>().ReceiveAmmo(amount);
                     break;
             }
+            StartCoroutine(Respawn());
         }
+    }
+
+    private IEnumerator Respawn()
+    {
+        respawning = true;
+        this.transform.position -= new Vector3 (0f, 100f, 0f);
+        yield return new WaitForSeconds(5f);
+        respawning = false;
+        this.transform.position += new Vector3 (0f, 100f, 0f);
     }
 
     public enum PickUpType

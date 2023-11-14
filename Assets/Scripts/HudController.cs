@@ -9,8 +9,11 @@ public class HudController : MonoBehaviour
 {
     [SerializeField] private Slider healthBar;
     [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI currentAmmo;
+    [SerializeField] private TextMeshProUGUI ammoStorage;
     [SerializeField] private Image damageEffect;
     [SerializeField] private float flashTime;
+    [SerializeField] private GameObject endPanel;
 
     private Coroutine dissapearCoroutine;
 
@@ -35,6 +38,16 @@ public class HudController : MonoBehaviour
     public void UpdateScore(int score)
     {
         scoreText.text = score.ToString("00000");
+    }
+
+    public void UpdateCurrentAmmo(string ammo)
+    {
+        currentAmmo.text = ammo;
+    }
+
+    public void UpdateAmmoStorage(string ammo)
+    {
+        ammoStorage.text = ammo;
     }
 
     /// <summary>
@@ -66,5 +79,11 @@ public class HudController : MonoBehaviour
             damageEffect.color = new Color(1.0f, 1.0f, 1.0f, alpha);
             yield return null;
         }
+    }
+
+    public void OpenEndPanel()
+    {
+        endPanel.SetActive(true);
+        Time.timeScale = 0.0f;
     }
 }

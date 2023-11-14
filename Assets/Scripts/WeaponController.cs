@@ -37,6 +37,7 @@ public class WeaponController : MonoBehaviour
         if(GetComponent<PlayerManager>())
         {
             IsPlayer = true;
+            HudController.instance.UpdateCurrentAmmo(currentAmmo + " / " + maxAmmo);
         }
         pool = GetComponent<ObjectPool>();
         /*
@@ -81,10 +82,15 @@ public class WeaponController : MonoBehaviour
 
         if (!infiniteAmmo)
         {
+            //Reduce ammo
+            currentAmmo--;
+            if (isPlayer)
+            {
+                HudController.instance.UpdateCurrentAmmo(currentAmmo + " / " + maxAmmo);
+            }
         }
 
-        //Get a new bullet            //Reduce ammo
-            currentAmmo--;
+        //Get a new bullet            
 
         GameObject bullet = pool.GetGameObject();
 
@@ -132,13 +138,16 @@ public class WeaponController : MonoBehaviour
             if (ammoCount < ammoToReload)
             {
                 currentAmmo += ammoCount;
+                HudController.instance.UpdateCurrentAmmo(currentAmmo + " / " + maxAmmo);
                 return ammoCount;
             }
             else
             {
                 currentAmmo = maxAmmo;
+                HudController.instance.UpdateCurrentAmmo(currentAmmo + " / " + maxAmmo);
                 return ammoToReload;
             }
+            
         }
         return 0;
     }

@@ -26,19 +26,27 @@ public class EnemySpawn : MonoBehaviour
         InstantiateEnemy();
         yield return new WaitForSeconds(1.5f);
 
-        //if(GameObject.)
+        if(GameObject.FindGameObjectsWithTag("Enemy").Length >= enemyNumber)
+        {
+            yield return new WaitUntil(() => GameObject.FindGameObjectsWithTag("Enemy").Length < enemyNumber);
+            spawnCoroutine = StartCoroutine(Spawn());
+        }
+        else
+        {
+            spawnCoroutine = StartCoroutine(Spawn());
+        }
     }
 
     private void InstantiateEnemy()
     {
-        Instantiate(enemyObject, RandomLocation(), Quaternion.identity);
+        Instantiate(enemyObject, RandomNavMeshLocation(), Quaternion.identity);
     }
 
     /// <summary>
     /// Generate a random location in the area
     /// </summary>
     /// <returns></returns>
-    private Vector3 RandomLocation()
+    private Vector3 RandomNavMeshLocation()
     {
         Vector3 finalPosition = Vector3.zero;
         Vector3 randomDirection = Random.insideUnitSphere * radius;
@@ -60,5 +68,17 @@ public class EnemySpawn : MonoBehaviour
         } while (finalPosition != null);
 
         return finalPosition;
+    }
+
+    /// <summary>
+    /// Generate a random location in the area
+    /// </summary>
+    /// <returns></returns>
+    private Vector3 RandomLocation()
+    {
+        float positionX = Random.Range(transform.position.x - 15, transform.position.x + 5);
+        float positionZ = Random.Range(transform.position.z - 15, transform.position.z + 5);
+
+        return new Vector3(positionX, 1f, positionZ);
     }
 }

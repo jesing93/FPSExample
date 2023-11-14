@@ -43,35 +43,42 @@ public class PlayerManager : MonoBehaviour
 
         //Hide the cursor
         Cursor.lockState = CursorLockMode.Locked;
+
+        //Initialize HUD
+        HudController.instance.UpdateAmmoStorage(currentAmmo + " / " + maxAmmo);
     }
 
     private void Update()
     {
-        CameraView();
-        //Jump
-        if (Input.GetButtonDown("Jump"))
+        if (currentLife > 0)
         {
-            Jump();
-        }
-
-        //Fire
-        if (Input.GetButtonDown("Fire1"))
-        {
-            if (weaponController.CanShoot()) 
+            CameraView();
+            //Jump
+            if (Input.GetButtonDown("Jump"))
             {
-                weaponController.Shoot();
+                Jump();
             }
-        }
 
-        //Reload
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            if (currentAmmo > 0)
+            //Fire
+            if (Input.GetButtonDown("Fire1"))
             {
-                int ammoSpent = weaponController.Reload(currentAmmo);
-                if (ammoSpent > 0)
+                if (weaponController.CanShoot())
                 {
-                    currentAmmo -= ammoSpent;
+                    weaponController.Shoot();
+                }
+            }
+
+            //Reload
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                if (currentAmmo > 0)
+                {
+                    int ammoSpent = weaponController.Reload(currentAmmo);
+                    if (ammoSpent > 0)
+                    {
+                        currentAmmo -= ammoSpent;
+                        HudController.instance.UpdateAmmoStorage(currentAmmo + " / " + maxAmmo);
+                    }
                 }
             }
         }
@@ -134,11 +141,16 @@ public class PlayerManager : MonoBehaviour
     {
         currentLife = Mathf.Clamp(currentLife - damage, 0, maxLife);
         HudController.instance.UpdateHealth(currentLife);
+        if (currentLife == 0)
+        {
+            HudController.instance.OpenEndPanel();
+        }
     }
 
     public void ReceiveAmmo(int ammo)
     {
         currentAmmo = Math.Clamp((currentAmmo + ammo), 0, maxAmmo);
+        HudController.instance.UpdateAmmoStorage(currentAmmo + " / " + maxAmmo);
     }
 
     public void ReceiveHealth(int health)
