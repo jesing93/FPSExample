@@ -20,6 +20,14 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private int maxAmmo;
     [SerializeField] private float currentLife;
     [SerializeField] private float maxLife;
+    private float currentStamina = 100f;
+    private float maxStamina = 100f;
+    private float staminaRecoverRate = 10f;
+    private float staminaConsumptionRate = 20f;
+    private float staminaRecoveryDelay = 2f;
+    private float lastTimeEmptyStamina;
+    private bool isSprinting;
+    private bool isSprintPressed;
     private int score;
 
     //Components
@@ -81,6 +89,9 @@ public class PlayerManager : MonoBehaviour
                     }
                 }
             }
+
+            //Stamina management
+            Sprint();
         }
     }
 
@@ -96,8 +107,17 @@ public class PlayerManager : MonoBehaviour
     {
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
+        Vector3 direction;
 
-        Vector3 direction = (transform.right * x + transform.forward * z).normalized * speed;
+        if (isSprinting && currentStamina > 0)
+        {
+            direction = (transform.right * x + transform.forward * z).normalized * speed * 2f;
+        }
+        else
+        {
+            direction = (transform.right * x + transform.forward * z).normalized * speed;
+        }
+        
         direction.y = rb.velocity.y;
 
         rb.velocity = direction;
@@ -115,6 +135,49 @@ public class PlayerManager : MonoBehaviour
         if (Physics.Raycast(ray, 1.1f))
         {
             rb.velocity = new Vector3 (rb.velocity.x, jumpForce, rb.velocity.z);
+        }
+    }
+
+    /// <summary>
+    /// Manage the sprint and stamina
+    /// </summary>
+    private void Sprint()
+    {
+        isSprintPressed = Input.GetKey(KeyCode.LeftShift);
+        if (isSprintPressed)
+        {
+            //If can sprint and not sprinting
+            if (currentStamina > 0 && !isSprinting) // && lastTimeEmptyStamina + staminaRecoveryDelay < Time.time
+            {
+                isSprinting = true;
+            }
+        }
+        else if (isSprinting)
+        {
+            //Stop sprint
+            isSprinting = false;
+        }
+
+        if (isSprinting)
+        {
+            //If trying to sprint and able to do it
+            if (currentStamina > 0)
+            {
+                currentStamina = Mathf.Clamp(currentStamina - staminaConsumptionRate * Time.deltaTime, 0, maxStamina);
+                HudController.instance.UpdateStamina(currentStamina);
+            }
+            else
+            {
+                isSprinting = false;
+                //lastTimeEmptyStamina = Time.time;
+                //StartCoroutine(HudController.instance.StaminaExhausted(4, .2f));
+            }
+        }
+        else if (currentStamina < maxStamina && !isSprintPressed)
+        {
+            //Stamina regeneration
+            currentStamina = Mathf.Clamp(currentStamina + staminaRecoverRate * Time.deltaTime, 0, maxStamina);
+            HudController.instance.UpdateStamina(currentStamina);
         }
     }
 
